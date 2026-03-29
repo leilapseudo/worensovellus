@@ -15,7 +15,7 @@ Liitä seuraavat rivit :
 
 git clone https://github.com/leilapseudo/worensovellus
 
-cd tikawe
+cd worensovellus
 
 pip install flask
 
