@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kirjautuminen - WOREN</title>
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 400px;
+      margin: 100px auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-weight: normal;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[type="submit"] {
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    a {
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: black;
+      font-size: 14px;
+    }
+
+    p {
+      color: #333;
+    }
+
+    .about-text {
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 25px;
+      line-height: 1.4;
+    }
+
+    .about-text a {
+      color: #555;
+      text-decoration: none;
+    }
+
+    .about-text a:hover {
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>WOREN</h1>
+    <h2>2025</h2>
+
+    {% if session.username %}
+      <p>Olet kirjautunut nimellä {{ session.username }}</p>
+      <a href="/logout">Kirjaudu ulos</a>
+    {% else %}
+      <form action="/login" method="post">
+        <input type="text" name="username" placeholder="tunnus" required>
+        <input type="password" name="password" placeholder="salasana" required>
+        <input type="submit" value="Kirjaudu">
+      </form>
+
+      <a href="/register">Luo tunnus</a>
+
+      <p class="about-text">
+        <a href="/about">
+          asuja ja ihmisiä
+        </a>
+      </p>
+
+    {% endif %}
+  </div>
+
+</body>
+</html>
