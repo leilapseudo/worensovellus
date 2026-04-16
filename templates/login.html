@@ -10,71 +10,84 @@
       padding: 0;
     }
 
-    .container {
-      width: 400px;
-      margin: 100px auto;
-      text-align: center;
-    }
-
     h1 {
+      text-align: center;
+      margin-top: 40px;
       font-size: 48px;
       letter-spacing: 4px;
       margin-bottom: 10px;
     }
 
+    .container {
+      width: 350px;
+      margin: 0 auto;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+
     h2 {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #000000;
       font-weight: normal;
-      color: #555;
-      margin-bottom: 40px;
+      margin-bottom: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: black;
+      margin: 0 5px;
+    }
+
+    a:hover {
+      opacity: 0.6;
     }
 
     form {
       background: white;
-      padding: 30px;
-      border-radius: 10px;
-    }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    input[type="submit"] {
-      background: black;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    a {
-      display: block;
-      margin-top: 20px;
-      text-decoration: none;
-      color: black;
-      font-size: 14px;
+      padding: 20px;
+      margin-bottom: 30px;
     }
 
     p {
-      color: #333;
+      font-size: 15px;
+      color: #000000;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
     }
 
-    .about-text {
-      font-size: 12px;
-      font-weight: bold;
-      margin-top: 25px;
-      line-height: 1.4;
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      border: 1px solid #1a1a1a;
+      border-radius: 0;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      background: #f5f5f5;
+      box-sizing: border-box;
     }
 
-    .about-text a {
-      color: #555;
-      text-decoration: none;
+    input[type="submit"] {
+      padding: 8px 14px;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      cursor: pointer;
     }
 
-    .about-text a:hover {
-      color: black;
+    input[type="submit"]:hover {
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -83,25 +96,29 @@
 
   <div class="container">
     <h1>WOREN</h1>
-    <h2>2025</h2>
+    <h2>Kirjaudu sisään</h2>
 
     {% if session.username %}
       <p>Olet kirjautunut nimellä {{ session.username }}</p>
       <a href="/logout">Kirjaudu ulos</a>
     {% else %}
       <form action="/login" method="post">
-        <input type="text" name="username" placeholder="tunnus" required>
-        <input type="password" name="password" placeholder="salasana" required>
+        <p>Tunnus:</p>
+        <input type="text" name="username" placeholder="" required> <br>
+        <p>Salasana:</p>
+        <input type="password" name="password" placeholder="" required>
+        <br>
+        <br>
         <input type="submit" value="Kirjaudu">
       </form>
 
-      <a href="/register">Luo tunnus</a>
+      <em><a href="/register">Luo tunnus</a></em>
 
-      <p class="about-text">
-        <a href="/about">
+      <h6><p class="about-text">
+        <em><a href="/about">
           asuja ja ihmisiä
-        </a>
-      </p>
+        </a></em>
+      </p></h6>
 
     {% endif %}
   </div>

@@ -1,26 +1,143 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Uusi ilmoitus</title>
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 48px;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+
+    .container {
+      width: 600px;
+      margin: 0 auto;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+
+    h2 {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+      margin: 0 10px;
+    }
+
+    a:hover {
+      opacity: 0.6;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    p {
+      font-size: 13px;
+      color: #888;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      border: 1px solid #1a1a1a;
+      border-radius: 0;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      background: #f5f5f5;
+      box-sizing: border-box;
+    }
+
+    input[type="file"] {
+      border: none;
+      padding: 0;
+      background: none;
+    }
+
+    input[type="submit"] {
+      padding: 8px 14px;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      opacity: 0.8;
+    }
+  </style>
 </head>
-
 <body>
-  <h1>Uusi ilmoitus</h1>
-  <form action="/create_item" method="post" enctype="multipart/form-data">
-    <p>
-      Otsikko: <br />
-      <input type="text" name="title" />
-    </p>
-    <p>
-      Kuvaus: <br />
-      <textarea name="description" rows="8" cols="60"></textarea>
-    </p>
-    <p>
-      Kuva:<br><input type="file" name="image" accept="image/jpeg" />
-    </p>
-    <input type="submit" value="Luo ilmoitus" />
-  </form>
-</body>
 
+  <h1>WOREN</h1>
+
+  <div class="container">
+    <hr>
+    <h2>Uusi ilmoitus</h2>
+
+    <form action="/create_item" method="post" enctype="multipart/form-data">
+      <p>Otsikko</p>
+      <input type="text" name="title" maxlength="100" required />
+      <p>Kuvaus</p>
+      <textarea name="description" rows="8" maxlength="5000" required></textarea>
+      <p>Kuva</p>
+      <input type="file" name="image" accept="image/jpeg" />
+      <input type="submit" value="Luo ilmoitus" />
+      <p>Mitä tyylisuuntausta asusi edustaa? <br />
+        <select name = "section">
+          <option value = "minimalismi">minimalismi</option>
+          <option value = "maksimalismi">maksimalismi</option>
+          <option value = "boheemi">boheemi</option>
+          <option value = "business">business</option>
+          <option value = "vintage">vintage</option>
+          <option value = "goth">goth</option>
+          <option value = "grunge">grunge</option>
+          <option value = "streetwear">streetwear</option>
+          <option value = "y2k">y2k</option>
+        </select>
+      </p>
+      
+
+      <p>Kausi</p>
+      <select name="season">
+        <option value="ss">ss — spring/summer</option>
+        <option value="fw">fw — fall/winter</option>
+      </select>
+    </form>
+
+    <a href="/">← takaisin</a>
+  </div>
+
+</body>
 </html>

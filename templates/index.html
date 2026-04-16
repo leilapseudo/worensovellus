@@ -15,47 +15,29 @@
       margin-top: 40px;
       font-size: 48px;
       letter-spacing: 4px;
+      margin-bottom: 10px;
     }
 
     .container {
-      width: 600px;
+      width: 300px;
       margin: 0 auto;
-    }
-
-    form {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    input[type="text"] {
-      padding: 8px;
-      width: 60%;
-    }
-
-    input[type="submit"] {
-      padding: 8px 12px;
-    }
-
-    .item {
-      background: white;
-      padding: 20px;
-      margin-bottom: 30px;
-      border-radius: 10px;
-    }
-
-    img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
-    p {
-      color: #333;
     }
 
     .nav {
       text-align: center;
       margin-bottom: 20px;
+      font-size: 13px;
+    }
+
+    .nav p {
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .nav a {
+      font-size: 13px;
+      font-weight: normal;
+      letter-spacing: 0.5px;
     }
 
     a {
@@ -64,51 +46,189 @@
       font-weight: bold;
       margin: 0 10px;
     }
+
+    a:hover {
+      opacity: 0.6;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+
+    h2 {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
+    .item {
+      background: white;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .item h3 {
+      margin: 8px 0;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
+    img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+    }
+
+    .username a {
+      font-size: 13px;
+      color: #1a1a1a;
+      font-weight: bold;
+      margin: 0;
+      text-decoration: mediumaquamarine, underline;
+    }
+
+    .username {
+      margin-bottom: 4px;
+    }
+
+    .item-actions {
+      margin-top: 12px;
+      font-size: 12px;
+    }
+
+    .item-actions a {
+      font-size: 12px;
+      font-weight: normal;
+      color: #888;
+      margin: 0 8px 0 0;
+    }
+
+    input[type="text"] {
+      padding: 8px 12px;
+      width: 60%;
+      border: 1px solid #1a1a1a;
+      border-radius: 0;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      background: #f5f5f5;
+    }
+
+    input[type="submit"] {
+      padding: 8px 14px;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    form {
+      text-align: center;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
 
   <h1>WOREN</h1>
 
-  <!-- small about link -->
-  <div style="text-align: center; margin-top: -20px; margin-bottom: 30px;">
-    <a href="/about" style="font-size: 12px; font-weight: bold; color: #555; text-decoration: none;">
-      about
-    </a>
+  <body>
+<a href = "/about">
+  <img src="/static/carpet.jpg" style="
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  width: 80px;
+  height: 140px;
+  object-fit: cover;
+">
+</a>
+
+  <div style="text-align: center; margin-bottom: 30px;">
+    <a href="/about" style="
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #1a1a1a;
+      padding: 6px 16px;
+      text-decoration: none;
+      letter-spacing: 1px;
+    ">about woren</a>
   </div>
 
   <div class="container">
 
     <div class="nav">
       {% if session.username %}
-        <p>Olet kirjautunut nimellä {{ session.username }}</p>
-        <a href="/new_item">Lisää uusi asukuva</a>
-        <a href="/logout">Kirjaudu ulos</a>
+        <p>kirjautunut: {{ session.username }}</p>
+        <a href="/new_item">+ lisää asukuva</a>
+        <a href="/logout">kirjaudu ulos</a>
       {% else %}
-        <a href="/login">Kirjaudu sisään</a>
-        <a href="/register">Luo tunnus</a>
+        <a href="/login">kirjaudu sisään</a>
+        <a href="/register">luo tunnus</a>
       {% endif %}
     </div>
 
-    <form action="/search" method="get">
-      <input type="text" name="query" placeholder="Etsi asuja..." />
-      <input type="submit" value="Hae" />
-    </form>
+    <form action="/search" method="get" style="position: fixed; top: 16px; right: 24px; margin: 0;">
+  <select name="section" style="padding: 8px; border: 1px solid #1a1a1a; font-family: Helvetica, Arial, sans-serif; font-size: 13px; background: #f5f5f5;">
+    <option value="">kaikki</option>
+    <option value="minimalismi">minimalismi</option>
+    <option value="maksimalismi">maksimalismi</option>
+    <option value="boheemi">boheemi</option>
+    <option value="business">business</option>
+    <option value="vintage">vintage</option>
+    <option value="goth">goth</option>
+    <option value="grunge">grunge</option>
+    <option value="streetwear">streetwear</option>
+    <option value="y2k">y2k</option>
+  </select>
+  <input type="text" name="query" placeholder="etsi asuja..." style="width: 140px;" />
+  <input type="submit" value="hae" />
+</form>
+<select name="season">
+  <option value="">kaikki kaudet</option>
+  <option value="SS">SS</option>
+  <option value="FW">FW</option>
+</select>
 
     <hr>
 
     <h2>Ilmoitukset</h2>
 
-    {% for item in items %}
-      <div class="item">
-        <h3>{{ item.title }}</h3>
-        <img src="/image/{{ item.id }}">
-        <p>{{ item.description }}</p>
-        <a href="/item/{{ item.id }}">View details</a>
+      {% for item in items %}
+        <div class="item">
+    <p class="username"><a href="/user/{{ item.username }}">{{ item.username }}</a></p>
+    <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
+    <img src="/image/{{ item.id }}" alt="{{ item.title }}">
+    <p>{{ item.description }}</p>
+    {% if session.username == item.username %}
+    <img src="/profile_image/{{ user_id }}" />
+      <div class="item-actions">
+        <a href="/edit_item/{{ item.id }}">muokkaa</a>
+        <a href="/remove_item/{{ item.id }}" onclick="return confirm('Oletko varma?')">poista</a>
       </div>
+    {% endif %}
+
+  {% for comment in comments if comment.item_id == item.id %}
+  {% if loop.first %}
+    <hr style="border: none; border-top: 1px solid #eee; margin: 12px 0;">
+  {% endif %}
+  <p style="font-size: 14px; margin: 10px 0; color: #000000;">
+    <a href="/user/{{ comment.username }}" style="color: #000000; font-weight: normal; margin: 0;">{{ comment.username }}</a>
+    <span style="color: #ccc; margin: 0 6px;">—</span>{{ comment.content }}
+  </p>
+  {% if not loop.last %}
+    <hr style="border: none; border-top: 1px solid #eee; margin: 10px 0;">
+  {% endif %}
+  {% endfor %}
+
+    </div>
     {% endfor %}
-
-  </div>
-
-</body>
+  </body>
 </html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ user.username }} - WOREN</title>
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 48px;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+    .container {
+      width: 600px;
+      margin: 0 auto;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+    .profile-header {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .profile-left {
+      background: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+    }
+    .profile-left img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .profile-info h2 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+    .profile-info p {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: #888;
+    }
+    .profile-info a {
+      font-size: 12px;
+      font-weight: normal;
+      color: #888;
+    }
+    .profile-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 130px;
+    }
+    .stat-big {
+      background: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-big h2 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: 1px;
+    }
+    .stat-big p {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .stat-small {
+      background: white;
+      padding: 12px 20px;
+      text-align: center;
+    }
+    .stat-small h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .stat-small p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    h3 {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+    .item {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .item h3 {
+      margin: 8px 0;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: #111;
+      text-transform: none;
+    }
+    .item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .item p {
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
+    }
+    a {
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+    }
+    a:hover { opacity: 0.6; }
+    .back {
+      display: block;
+      font-size: 13px;
+      font-weight: normal;
+      color: #888;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>WOREN</h1>
+  <div class="container">
+    <hr>
+    <a class="back" href="/">← back</a>
+
+    <div class="profile-header">
+      <div class="profile-left">
+        <img src="/profile_image/{{ user.id }}" alt="{{ user.username }}">
+        <div class="profile-info">
+          <h2>{{ user.username }}</h2>
+          <p>joined {{ user.join_date }}</p>
+          {% if session.username == user.username %}
+            <a href="/add_image">lisää profiilikuva</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="profile-right">
+        <div class="stat-small">
+          <h3>{{ items|length }}</h3>
+          <p>asua</p>
+        </div>
+        <div class="stat-small">
+          <h3>{{ comments|length }}</h3>
+          <p>kommenttia</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>asujen määrä</h3>
+    {% for item in items %}
+      <div class="item">
+        <h3>{{ item.title }}</h3>
+        <img src="/image/{{ item.id }}">
+        <p>{{ item.description }}</p>
+      </div>
+    {% endfor %}
+
+    <h3>kommentit</h3>
+    {% for comment in comments %}
+      <div class="item">
+        <p style="font-size: 12px; color: #888;">{{ comment.title }} —</p>
+        <p>{{ comment.content }}</p>
+      </div>
+    {% endfor %}
+
+  </div>
+</body>
+</html>
