@@ -3,232 +3,406 @@
 <head>
   <title>WOREN</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
+
     body {
       font-family: Helvetica, Arial, sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 48px;
-      letter-spacing: 4px;
-      margin-bottom: 10px;
-    }
-
-    .container {
-      width: 300px;
-      margin: 0 auto;
-    }
-
-    .nav {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 13px;
-    }
-
-    .nav p {
-      color: #888;
-      margin-bottom: 8px;
-    }
-
-    .nav a {
-      font-size: 13px;
-      font-weight: normal;
-      letter-spacing: 0.5px;
+      background-color: #f2f2f2;
     }
 
     a {
       text-decoration: none;
       color: black;
-      font-weight: bold;
-      margin: 0 10px;
     }
 
-    a:hover {
-      opacity: 0.6;
+    a:hover { opacity: 0.6; }
+
+    .page {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      min-height: 100vh;
     }
 
-    hr {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 20px 0;
-    }
-
-    h2 {
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #888;
-      font-weight: normal;
-      margin-bottom: 20px;
-    }
-
-    .item {
+    /* SIDEBAR */
+    .sidebar {
+      border-right: 3px solid #1a1a1a;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
       background: white;
-      padding: 20px;
-      margin-bottom: 30px;
     }
 
-    .item h3 {
-      margin: 8px 0;
-      font-size: 18px;
-      letter-spacing: 1px;
+    .sidebar .logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      border-bottom: 3px solid #1a1a1a;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
     }
 
-    img {
-      width: 100%;
-      max-height: 200px;
-      object-fit: cover;
-    }
-
-    .username a {
-      font-size: 13px;
+    .sidebar a {
+      font-size: 12px;
       color: #1a1a1a;
-      font-weight: bold;
-      margin: 0;
-      text-decoration: mediumaquamarine, underline;
-    }
-
-    .username {
-      margin-bottom: 4px;
-    }
-
-    .item-actions {
-      margin-top: 12px;
-      font-size: 12px;
-    }
-
-    .item-actions a {
-      font-size: 12px;
+      text-decoration: none;
+      padding: 7px 0;
+      border-bottom: 1px solid #ddd;
       font-weight: normal;
-      color: #888;
-      margin: 0 8px 0 0;
+      display: block;
     }
 
-    input[type="text"] {
-      padding: 8px 12px;
-      width: 60%;
-      border: 1px solid #1a1a1a;
-      border-radius: 0;
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 13px;
-      background: #f5f5f5;
-    }
-
-    input[type="submit"] {
-      padding: 8px 14px;
+    .sidebar a:hover {
       background: #1a1a1a;
       color: white;
-      border: none;
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 13px;
-      cursor: pointer;
+      padding-left: 6px;
+      opacity: 1;
     }
 
-    form {
-      text-align: center;
-      margin-bottom: 20px;
+    .sidebar .sidebar-username {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 3px solid #1a1a1a;
+      color: #888;
+    }
+
+    /* MAIN */
+    .main { 
+    padding: 0; 
+    max-width: 600px; 
+    margin: 0 auto;
+    }
+
+
+    /* TOPBAR */
+    .topbar {
+      border-bottom: 3px solid #1a1a1a;
+      padding: 10px 20px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+
+    .topbar select,
+    .topbar input[type="text"] {
+      border: 1.5px solid #1a1a1a;
+      padding: 5px 8px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      background: white;
+      color: #1a1a1a;
+      font-family: inherit;
+    }
+
+    .topbar input[type="text"] { flex: 1; min-width: 140px; }
+
+    .topbar input[type="submit"] {
+      border: 1.5px solid #1a1a1a;
+      padding: 5px 14px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      background: #1a1a1a;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* FEED — single column */
+    .feed {
+      display: flex;
+      flex-direction: column;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* ITEM CARD */
+    .item {
+      border-bottom: 3px solid #1a1a1a;
+      background: white;
+      position: relative;
+    }
+
+    .item img {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: contain;
+    background: #f2f2f2;
+    }
+
+    .item-header {
+      padding: 12px 20px 10px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .item-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #1a1a1a;
+    }
+
+    .item-title a { color: #1a1a1a; font-weight: 700; }
+    .item-title a:hover { opacity: 0.6; }
+
+    .item-user {
+      font-size: 12px;
+      color: #1a1a1a;
+      white-space: nowrap;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    .item-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #555;
+      padding: 10px 20px 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    /* LIKE */
+    .item-actions {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .like-btn {
+      border: none;
+      border-right: 1px solid #ddd;
+      padding: 8px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      background: none;
+      color: #1a1a1a;
+      line-height: 1;
+    }
+
+    .like-btn:hover {
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .like-count {
+      font-size: 12px;
+      color: #888;
+      padding: 0 14px;
+    }
+
+    /* THREE-DOT MENU */
+    .menu {
+      margin-left: auto;
+      position: relative;
+    }
+
+    .menu-btn {
+      border: none;
+      border-left: 1px solid #ddd;
+      padding: 8px 14px;
+      font-size: 13px;
+      background: none;
+      color: #888;
+      cursor: pointer;
+      letter-spacing: 3px;
+    }
+
+    .menu-btn:hover { background: #f5f5f5; }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: white;
+      border: 1.5px solid #1a1a1a;
+      min-width: 110px;
+      z-index: 10;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #1a1a1a;
+      font-weight: normal;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover { background: #1a1a1a; color: white; opacity: 1; }
+
+    /* COMMENTS */
+    .comments {
+      padding: 8px 20px 6px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .comment {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #555;
+      padding: 2px 0;
+    }
+
+    .comment a {
+      font-weight: 700;
+      color: #1a1a1a;
+      font-size: 13px;
+    }
+
+    /* COMMENT FORM */
+    .comment-form {
+      display: flex;
+    }
+
+    .comment-form input[type="text"] {
+      flex: 1;
+      border: none;
+      padding: 10px 20px;
+      font-size: 13px;
+      background: white;
+      color: #1a1a1a;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .comment-form input[type="text"]::placeholder { color: #bbb; }
+
+    .comment-form input[type="submit"] {
+      border: none;
+      border-left: 1px solid #ddd;
+      padding: 10px 18px;
+      font-size: 13px;
+      background: none;
+      color: #1a1a1a;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .comment-form input[type="submit"]:hover {
+      background: #1a1a1a;
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <h1>WOREN</h1>
+<div class="page">
 
-  <body>
-<a href = "/about">
-  <img src="/static/carpet.jpg" style="
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  width: 80px;
-  height: 140px;
-  object-fit: cover;
-">
-</a>
-
-  <div style="text-align: center; margin-bottom: 30px;">
-    <a href="/about" style="
-      font-size: 13px;
-      font-weight: bold;
-      color: #fff;
-      background-color: #1a1a1a;
-      padding: 6px 16px;
-      text-decoration: none;
-      letter-spacing: 1px;
-    ">about woren</a>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">WOREN</div>
+    {% if session.username %}
+      <a href="/user/{{ session.username }}">oma profiili</a>
+      <a href="/new_item">+ lisää</a>
+      <a href="/logout">ulos</a>
+      <div class="sidebar-username">{{ session.username }}</div>
+    {% else %}
+      <a href="/login">kirjaudu sisään</a>
+      <a href="/register">luo tunnus</a>
+    {% endif %}
   </div>
 
-  <div class="container">
+  <div class="main">
 
-    <div class="nav">
-      {% if session.username %}
-        <p>kirjautunut: {{ session.username }}</p>
-        <a href="/new_item">+ lisää asukuva</a>
-        <a href="/logout">kirjaudu ulos</a>
-      {% else %}
-        <a href="/login">kirjaudu sisään</a>
-        <a href="/register">luo tunnus</a>
-      {% endif %}
+    <!-- TOPBAR / SEARCH -->
+    <div class="topbar">
+      <form action="/search" method="get" style="display:flex; gap:6px; align-items:center; flex:1; flex-wrap:wrap;">
+        <select name="section">
+          <option value="">kaikki</option>
+          <option value="minimalismi">minimalismi</option>
+          <option value="maksimalismi">maksimalismi</option>
+          <option value="boheemi">boheemi</option>
+          <option value="business">business</option>
+          <option value="vintage">vintage</option>
+          <option value="goth">goth</option>
+          <option value="grunge">grunge</option>
+          <option value="streetwear">streetwear</option>
+          <option value="y2k">y2k</option>
+        </select>
+        <select name="season">
+          <option value="">kaikki kaudet</option>
+          <option value="SS">SS</option>
+          <option value="FW">FW</option>
+        </select>
+        <input type="text" name="query" placeholder="etsi asuja..." />
+        <input type="submit" value="hae" />
+      </form>
     </div>
 
-    <form action="/search" method="get" style="position: fixed; top: 16px; right: 24px; margin: 0;">
-  <select name="section" style="padding: 8px; border: 1px solid #1a1a1a; font-family: Helvetica, Arial, sans-serif; font-size: 13px; background: #f5f5f5;">
-    <option value="">kaikki</option>
-    <option value="minimalismi">minimalismi</option>
-    <option value="maksimalismi">maksimalismi</option>
-    <option value="boheemi">boheemi</option>
-    <option value="business">business</option>
-    <option value="vintage">vintage</option>
-    <option value="goth">goth</option>
-    <option value="grunge">grunge</option>
-    <option value="streetwear">streetwear</option>
-    <option value="y2k">y2k</option>
-  </select>
-  <input type="text" name="query" placeholder="etsi asuja..." style="width: 140px;" />
-  <input type="submit" value="hae" />
-</form>
-<select name="season">
-  <option value="">kaikki kaudet</option>
-  <option value="SS">SS</option>
-  <option value="FW">FW</option>
-</select>
-
-    <hr>
-
-    <h2>Ilmoitukset</h2>
-
+    <!-- FEED -->
+    <div class="feed">
       {% for item in items %}
-        <div class="item">
-    <p class="username"><a href="/user/{{ item.username }}">{{ item.username }}</a></p>
-    <h3><a href="/item/{{ item.id }}">{{ item.title }}</a></h3>
-    <img src="/image/{{ item.id }}" alt="{{ item.title }}">
-    <p>{{ item.description }}</p>
-    {% if session.username == item.username %}
-    <img src="/profile_image/{{ user_id }}" />
-      <div class="item-actions">
-        <a href="/edit_item/{{ item.id }}">muokkaa</a>
-        <a href="/remove_item/{{ item.id }}" onclick="return confirm('Oletko varma?')">poista</a>
+      <div class="item">
+
+        <img src="/image/{{ item.id }}" alt="{{ item.title }}">
+
+        <div class="item-header">
+          <span class="item-title"><a href="/item/{{ item.id }}">{{ item.title }}</a></span>
+          <a class="item-user" href="/user/{{ item.username }}">{{ item.username }}</a>
+        </div>
+
+        <div class="item-desc">{{ item.description }}</div>
+
+        <div class="item-actions">
+          <form action="/like/{{ item.id }}" method="post" style="display:inline;">
+            <button class="like-btn" type="submit">
+              {% if item.id in user_likes %}♥{% else %}♡{% endif %}
+            </button>
+          </form>
+          <span class="like-count">{{ like_counts[item.id] }} tykkäystä</span>
+
+          {% if session.username == item.username %}
+          <div class="menu">
+            <button class="menu-btn" onclick="var d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block'">•••</button>
+            <div class="dropdown">
+              <a href="/edit_item/{{ item.id }}">muokkaa</a>
+              <a href="/remove_item/{{ item.id }}" onclick="return confirm('Oletko varma?')">poista</a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        {% for comment in comments if comment.item_id == item.id %}
+        {% if loop.first %}<div class="comments">{% endif %}
+        <p class="comment">
+          <a href="/user/{{ comment.username }}">{{ comment.username }}</a>
+          <span style="color:#bbb;"> — </span>{{ comment.content }}
+        </p>
+        {% if loop.last %}</div>{% endif %}
+        {% else %}
+        <div class="comments"></div>
+        {% endfor %}
+
+        {% if session.username %}
+        <form class="comment-form" action="/comment/{{ item.id }}" method="post">
+          <input type="text" name="content" placeholder="kommentoi" />
+          <input type="submit" value="→" />
+        </form>
+        {% endif %}
+
       </div>
-    {% endif %}
-
-  {% for comment in comments if comment.item_id == item.id %}
-  {% if loop.first %}
-    <hr style="border: none; border-top: 1px solid #eee; margin: 12px 0;">
-  {% endif %}
-  <p style="font-size: 14px; margin: 10px 0; color: #000000;">
-    <a href="/user/{{ comment.username }}" style="color: #000000; font-weight: normal; margin: 0;">{{ comment.username }}</a>
-    <span style="color: #ccc; margin: 0 6px;">—</span>{{ comment.content }}
-  </p>
-  {% if not loop.last %}
-    <hr style="border: none; border-top: 1px solid #eee; margin: 10px 0;">
-  {% endif %}
-  {% endfor %}
-
+      {% endfor %}
     </div>
-    {% endfor %}
-  </body>
+
+  </div>
+</div>
+
+</body>
 </html>

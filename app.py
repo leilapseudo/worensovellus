@@ -24,7 +24,18 @@ def index():
     sql = "SELECT items.id, items.title, items.description, users.username FROM items, users WHERE items.user_id = users.id"
     all_items = db.query(sql)
     all_comments = items.get_all_comments()
-    return render_template("index.html", items=all_items, comments = all_comments)
+    like_counts = {}
+    for item in all_items:
+        result = db.query("SELECT COUNT(*) FROM likes WHERE item_id = ?", [item["id"]])
+        like_counts[item["id"]] = result[0][0]
+    
+    user_likes = set()
+    if "user_id" in session:
+        liked = db.query("SELECT item_id FROM likes WHERE user_id = ?", [session["user_id"]])
+        user_likes = {row["item_id"] for row in liked}
+
+
+    return render_template("index.html", items=all_items, comments=all_comments, like_counts=like_counts, user_likes=user_likes)
 
 @app.route("/new_item")
 def new_item():
@@ -76,6 +87,20 @@ def remove_item(id):
     db.execute("DELETE FROM items WHERE id = ?", [id])
     return redirect("/")
 
+@app.route("/like/<int:item_id>", methods=["POST"])
+def like(item_id):
+    if "user_id" not in session:
+        return redirect("/login")
+    user_id = session["user_id"]
+    existing = db.query(
+        "SELECT * FROM likes WHERE user_id=? AND item_id=?",
+        [user_id, item_id]
+    )
+    if existing:
+        db.execute("DELETE FROM likes WHERE user_id=? AND item_id=?", [user_id, item_id])
+    else:
+        db.execute("INSERT INTO likes (user_id, item_id) VALUES (?, ?)", [user_id, item_id])
+    return redirect("/")
 
 @app.route("/search")
 def search():
