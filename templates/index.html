@@ -23,13 +23,41 @@
       min-height: 100vh;
     }
 
+  /* SUCCESFUL REGISTRATION */
+    .flash-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+  }
+
+  .flash {
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    animation: fadeout 3s forwards;
+  }
+
+  .flash.success { background: #30ffee; }
+  .flash.error { background: #ff019e; }
+
+  @keyframes fadeout {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+
+
     /* SIDEBAR */
     .sidebar {
       border-right: 3px solid #1a1a1a;
       padding: 20px 14px;
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 10;
       position: sticky;
       top: 0;
       height: 100vh;
@@ -41,8 +69,9 @@
       font-weight: 900;
       letter-spacing: 6px;
       border-bottom: 3px solid #1a1a1a;
-      padding-bottom: 14px;
-      margin-bottom: 14px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      margin-right: 50px ;
     }
 
     .sidebar a {
@@ -63,14 +92,15 @@
     }
 
     .sidebar .sidebar-username {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
+      text-decoration: wavy, blanchedalmond;
       letter-spacing: 1px;
       text-transform: uppercase;
       margin-top: auto;
       padding-top: 12px;
       border-top: 3px solid #1a1a1a;
-      color: #888;
+      color: #110e0e;
     }
 
     /* MAIN */
@@ -144,7 +174,6 @@
 
     .item-header {
       padding: 12px 20px 10px;
-      border-bottom: 1px solid #ddd;
       display: flex;
       justify-content: space-between;
       align-items: baseline;
@@ -167,6 +196,10 @@
       white-space: nowrap;
       text-decoration: underline;
       font-weight: bold;
+    }
+
+    .item-header img {
+    border-radius: 0% !important;
     }
 
     .item-desc {
@@ -212,18 +245,14 @@
       position: relative;
     }
 
-    .menu-btn {
-      border: none;
+      menu { margin-left: auto; display: flex; }
+      .menu-link {
       border-left: 1px solid #ddd;
       padding: 8px 14px;
-      font-size: 13px;
-      background: none;
+      font-size: 12px;
       color: #888;
-      cursor: pointer;
-      letter-spacing: 3px;
-    }
-
-    .menu-btn:hover { background: #f5f5f5; }
+      }
+      .menu-link:hover { background: #1a1a1a; color: white; opacity: 1; }
 
     .dropdown {
       display: none;
@@ -299,9 +328,42 @@
       background: #1a1a1a;
       color: white;
     }
+
+    /*REPOST*/
+
+    .repost-btn {
+      border: none;
+      border-left: 1px solid #ddd;
+      padding: 8px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      background: none;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: inherit;
+    }
+    .repost-btn:hover { background: #1a1a1a; color: white; }
+    .repost-btn.reposted { color: #1a1a1a; font-weight: 700; }
+    .repost-count { font-size: 12px; color: #888; padding: 0 14px; border-left: 1px solid #ddd; }
   </style>
 </head>
 <body>
+
+
+  <!--SUCCESSFUL REGISTRATION -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 
 <div class="page">
 
@@ -353,20 +415,54 @@
 
         <img src="/image/{{ item.id }}" alt="{{ item.title }}">
 
-        <div class="item-header">
-          <span class="item-title"><a href="/item/{{ item.id }}">{{ item.title }}</a></span>
-          <a class="item-user" href="/user/{{ item.username }}">{{ item.username }}</a>
+      <div class="item-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <a href="/user/{{ item.username }}">
+            <img src="/profile_image/{{ item.user_id }}" 
+                style="width:32px; height:32px; object-fit:cover; border-radius:50%; border:1.5px solid #1a1a1a;">
+          </a>
+          <div>
+            <a class="item-user" href="/user/{{ item.username }}">{{ item.username }}</a>
+            <span class="item-title" style="display:block; font-size:14px;">
+              <a href="/item/{{ item.id }}">{{ item.title }}</a>
+            </span>
+          </div>
         </div>
+      </div>
 
         <div class="item-desc">{{ item.description }}</div>
 
-        <div class="item-actions">
-          <form action="/like/{{ item.id }}" method="post" style="display:inline;">
-            <button class="like-btn" type="submit">
-              {% if item.id in user_likes %}♥{% else %}♡{% endif %}
-            </button>
-          </form>
-          <span class="like-count">{{ like_counts[item.id] }} tykkäystä</span>
+  <div class="item-actions">
+        
+        <form action="/like/{{ item.id }}" method="post" style="display:inline;">
+          <button class="like-btn" type="submit">
+            {% if item.id in user_likes %}♥{% else %}♡{% endif %}
+          </button>
+        </form>
+        <span class="like-count">{{ like_counts[item.id] }} tykkäystä</span>
+
+       
+        {% if session.username %}
+        <form action="/repost/{{ item.id }}" method="post" style="display:inline;">
+          <button class="repost-btn {% if item.id in user_reposts %}reposted{% endif %}" type="submit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
+              <path d="M17 1l4 4-4 4"/>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <path d="M7 23l-4-4 4-4"/>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+            repost
+          </button>
+        </form>
+        <span class="repost-count">{{ repost_counts.get(item.id, 0) }}</span>
+        {% endif %}
+
+          {% if session.username == item.username %}
+          <div class="menu">
+            <a href="/edit_item/{{ item.id }}" class="menu-link">muokkaa</a>
+            <a href="/remove_item/{{ item.id }}" class="menu-link">poista</a>
+          </div>
+          {% endif %}
 
           {% if session.username == item.username %}
           <div class="menu">
@@ -378,6 +474,9 @@
           </div>
           {% endif %}
         </div>
+
+
+      <!--COMMENTS-->
 
         {% for comment in comments if comment.item_id == item.id %}
         {% if loop.first %}<div class="comments">{% endif %}
@@ -391,16 +490,29 @@
         {% endfor %}
 
         {% if session.username %}
-        <form class="comment-form" action="/comment/{{ item.id }}" method="post">
+        <form class="comment-form" action="/comment" method="post">
+          <input type="hidden" name="item_id" value="{{ item.id }}">
           <input type="text" name="content" placeholder="kommentoi" />
           <input type="submit" value="→" />
         </form>
         {% endif %}
-
       </div>
       {% endfor %}
     </div>
 
+</div>
+    <!-- PAGES -->
+    <div style="display:flex; justify-content:space-between; padding: 20px; border-top: 3px solid #1a1a1a;">
+      {% if page > 1 %}
+        <a href="/?page={{ page - 1 }}" style="font-size:12px; letter-spacing:2px;">← edellinen</a>
+      {% else %}
+        <span></span>
+      {% endif %}
+      <span style="font-size:12px; color:#888;">{{ page }} / {{ total_pages }}</span>
+      {% if page < total_pages %}
+        <a href="/?page={{ page + 1 }}" style="font-size:12px; letter-spacing:2px;">seuraava →</a>
+      {% endif %}
+    </div>
   </div>
 </div>
 

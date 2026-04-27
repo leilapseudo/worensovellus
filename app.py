@@ -8,6 +8,7 @@ import users
 from werkzeug.security import check_password_hash, generate_password_hash
 import imghdr
 from flask import make_response, abort
+from flask import redirect, url_for, flash
 
 
 app = Flask(__name__)
@@ -18,24 +19,35 @@ def require_login():
     if "user_id" not in session:
         abort(403)
 
-
 @app.route("/")
 def index():
-    sql = "SELECT items.id, items.title, items.description, users.username FROM items, users WHERE items.user_id = users.id"
-    all_items = db.query(sql)
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+    offset = (page - 1) * per_page
+
+    total = db.query("SELECT COUNT(*) FROM items")[0][0]
+    total_pages = (total + per_page - 1) // per_page
+
+    sql = "SELECT items.id, items.title, items.description, users.username, users.id AS user_id FROM items, users WHERE items.user_id = users.id ORDER BY items.id DESC LIMIT ? OFFSET ?"
+    all_items = db.query(sql, [per_page, offset])
     all_comments = items.get_all_comments()
+
     like_counts = {}
     for item in all_items:
         result = db.query("SELECT COUNT(*) FROM likes WHERE item_id = ?", [item["id"]])
         like_counts[item["id"]] = result[0][0]
-    
+
     user_likes = set()
+    user_reposts = set()
+    repost_counts = {row["item_id"]: row["count"] for row in db.query("SELECT item_id, COUNT(*) AS count FROM reposts GROUP BY item_id")}
+
     if "user_id" in session:
         liked = db.query("SELECT item_id FROM likes WHERE user_id = ?", [session["user_id"]])
         user_likes = {row["item_id"] for row in liked}
+        reposted = db.query("SELECT item_id FROM reposts WHERE username = ?", [session["username"]])
+        user_reposts = {row["item_id"] for row in reposted}
 
-
-    return render_template("index.html", items=all_items, comments=all_comments, like_counts=like_counts, user_likes=user_likes)
+    return render_template("index.html", items=all_items, comments=all_comments, like_counts=like_counts, user_likes=user_likes, repost_counts=repost_counts, user_reposts=user_reposts, page=page, total_pages=total_pages)
 
 @app.route("/new_item")
 def new_item():
@@ -79,6 +91,21 @@ def edit_item(id):
         abort(403)
     return render_template("edit_item.html", item=item)
 
+@app.route("/edit_item", methods=["POST"])
+def update_item():
+    require_login()
+    id = request.form["id"]
+    title = request.form["title"]
+    description = request.form["description"]
+    sql = "SELECT id, user_id FROM items WHERE id = ?"
+    result = db.query(sql, [id])
+    if not result:
+        abort(404)
+    if result[0]["user_id"] != session["user_id"]:
+        abort(403)
+    db.execute("UPDATE items SET title = ?, description = ? WHERE id = ?", [title, description, id])
+    return redirect("/")
+
 
 @app.route("/remove_item/<int:id>")
 def remove_item(id):
@@ -102,22 +129,53 @@ def like(item_id):
         db.execute("INSERT INTO likes (user_id, item_id) VALUES (?, ?)", [user_id, item_id])
     return redirect("/")
 
+@app.route("/repost/<int:id>", methods=["POST"])
+def repost(id):
+    require_login()
+    username = session["username"]
+    existing = db.query("SELECT id FROM reposts WHERE username = ? AND item_id = ?", [username, id])
+    if existing:
+        db.execute("DELETE FROM reposts WHERE username = ? AND item_id = ?", [username, id])
+    else:
+        db.execute("INSERT INTO reposts (username, item_id) VALUES (?, ?)", [username, id])
+    return redirect("/")
+
+
 @app.route("/search")
 def search():
     query = request.args.get("query", "")
     section = request.args.get("section", "")
-    sql = "SELECT items.id, items.title, items.description, users.username FROM items, users WHERE items.user_id = users.id AND (items.title LIKE ? OR items.description LIKE ?)"
+    season = request.args.get("season", "")
+
+    sql = "SELECT items.id, items.title, items.description, users.username, users.id AS user_id FROM items, users WHERE items.user_id = users.id AND (items.title LIKE ? OR items.description LIKE ?)"
     params = [f"%{query}%", f"%{query}%"]
+
     if section:
         sql += " AND items.section = ?"
         params.append(section)
-    season = request.args.get("season", "")
     if season:
         sql += " AND items.season = ?"
         params.append(season)
+
     all_items = db.query(sql, params)
     all_comments = items.get_all_comments()
-    return render_template("index.html", items=all_items, comments=all_comments)
+
+    like_counts = {}
+    for item in all_items:
+        result = db.query("SELECT COUNT(*) FROM likes WHERE item_id = ?", [item["id"]])
+        like_counts[item["id"]] = result[0][0]
+
+    user_likes = set()
+    user_reposts = set()
+    repost_counts = {row["item_id"]: row["count"] for row in db.query("SELECT item_id, COUNT(*) AS count FROM reposts GROUP BY item_id")}
+
+    if "user_id" in session:
+        liked = db.query("SELECT item_id FROM likes WHERE user_id = ?", [session["user_id"]])
+        user_likes = {row["item_id"] for row in liked}
+        reposted = db.query("SELECT item_id FROM reposts WHERE username = ?", [session["username"]])
+        user_reposts = {row["item_id"] for row in reposted}
+
+    return render_template("index.html", items=all_items, comments=all_comments, like_counts=like_counts, user_likes=user_likes, repost_counts=repost_counts, user_reposts=user_reposts, page=1, total_pages=1)
 
 
 @app.route("/image/<int:id>")
@@ -144,24 +202,25 @@ def create():
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
-    return "Tunnus luotu"
+        flash("VIRHE: tunnus on jo varattu", "error")
+        return redirect(url_for("index"))
+
+    flash("Tunnus luotu!", "success")
+    return redirect(url_for("index"))
 
 
 
-@app.route("/comment/<int:item_id>", methods=["POST"])
-def comment(item_id):
+@app.route("/comment", methods=["POST"])
+def comment():
+    item_id = request.form["item_id"]
     content = request.form["content"]
-    user_id = session.get("user_id")
-    
-    print("SESSION:", dict(session)) 
-    print("DATA:", item_id, user_id, content)
-    
-    if not user_id:
-        return "not logged in", 403  
-    
-    items.add_comment(item_id, user_id, content)
-    return redirect("/item/" + str(item_id))
+    user_id = session["user_id"]
+
+    sql = "INSERT INTO comments (item_id, user_id, content) VALUES (?, ?, ?)"
+    db.execute(sql, [item_id, user_id, content])
+
+    return redirect(url_for("index"))
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

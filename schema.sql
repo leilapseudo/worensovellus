@@ -24,3 +24,9 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS reposts (
+    id INTEGER PRIMARY KEY,
+    username TEXT NOT NULL,
+    item_id INTEGER NOT NULL
+);
