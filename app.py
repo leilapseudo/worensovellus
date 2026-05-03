@@ -1,15 +1,12 @@
 import sqlite3
-from flask import Flask, redirect, render_template, request, session, send_file, abort, make_response
+import secrets
 import io
 import config
 import db
 import items
 import users
+from flask import Flask, redirect, render_template, request, session, send_file, abort, make_response, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash
-import imghdr
-import secrets
-from flask import make_response, abort
-from flask import redirect, url_for, flash
 
 
 app = Flask(__name__)
@@ -306,9 +303,14 @@ def show_image(user_id):
     image = users.get_image(user_id)
     if not image:
         abort(404)
-    image_type = imghdr.what(None, h=image)
-    mime = f"image/{image_type}" if image_type else "application/octet-stream"
-    
+    if image[:4] == b'\x89PNG':
+        mime = "image/png"
+    elif image[:2] == b'\xff\xd8':
+        mime = "image/jpeg"
+    elif image[:4] == b'RIFF':
+        mime = "image/webp"
+    else:
+        mime = "image/jpeg"
     response = make_response(image)
     response.headers.set("Content-Type", mime)
     return response
