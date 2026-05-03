@@ -13,10 +13,15 @@ WOREN on asuinspiraatiosovellus asukriiseihin. Selaa muiden asuja, jaa omiasi.
 
 ## Asennus
 
+
 -git clone https://github.com/leilapseudo/worensovellus
+
 -cd worensovellus
+
 -pip install flask
+
 -sqlite3 database.db < schema.sql
+
 -flask run
 
 -Avaa selaimessa: http://127.0.0.1:5000
