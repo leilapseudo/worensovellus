@@ -1,27 +1,25 @@
-#Woren
-WHO WORE WHAT?
-Tässä sovelluksessa saat apua asukriiseihin. Omassa profiilissa näet vanhoja asujasi ja saat
-asuinspiraatiota muilta käyttäjiltä!
+# WOREN — who wore what?
 
-- Sovellukseen voi luoda tunnuksen, kirjautua ja kirjautua ulos
-- Sovellukseen voi lisätä ilmoituksia, jossa on tekstiä ja kuva. Ilmoituksia voi muokata ja poistaa.
-- Sovelluksessa voi hakea ilmoituksia
+WOREN on asuinspiraatiosovellus asukriiseihin. Selaa muiden asuja, jaa omiasi.
 
+## Ominaisuudet
 
-Ohjeet käyttöön
-1. Avaa terminaali
+- Rekisteröityminen, kirjautuminen ja uloskirjautuminen
+- Asujen lisääminen, muokkaaminen ja poistaminen
+- Kuvat ja kuvaukset jokaiseen asuun
+- Tykkäykset, kommentit ja repostaukset
+- Haku tyylisuuntauksien ja kauden mukaan (minimalistic, fall/winter)
+- Oma profiilisivu asuhistorialla ja statseillä
 
-Liitä seuraavat rivit :
+## Asennus
 
 git clone https://github.com/leilapseudo/worensovellus
-
 cd worensovellus
-
 pip install flask
-
 sqlite3 database.db < schema.sql
-
 flask run
+
+Avaa selaimessa: http://127.0.0.1:5000
 
 
 
