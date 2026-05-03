@@ -106,8 +106,9 @@ def edit_item(id):
 
 @app.route("/edit_item", methods=["POST"])
 def update_item():
-    check_csrf()
     require_login()
+    check_csrf()
+
     id = request.form["id"]
     title = request.form["title"]
     description = request.form["description"]
@@ -140,10 +141,7 @@ def like(item_id):
     if "user_id" not in session:
         return redirect("/login")
     user_id = session["user_id"]
-    existing = db.query(
-        db.query("SELECT id FROM likes WHERE user_id = ? AND item_id = ?", [user_id, item_id]),
-        [user_id, item_id]
-    )
+    existing = db.query("SELECT id FROM likes WHERE user_id = ? AND item_id = ?", [user_id, item_id])
     if existing:
         db.execute("DELETE FROM likes WHERE user_id=? AND item_id=?", [user_id, item_id])
     else:
@@ -216,7 +214,6 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    check_csrf()
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -319,10 +316,10 @@ def show_image(user_id):
 @app.route("/add_image", methods=["GET", "POST"])
 def add_image():
     require_login()
-    check_csrf()
     if request.method == "GET":
         return render_template("add_image.html")
     if request.method == "POST":
+        check_csrf()
         file = request.files["image"]
         if not file.filename.rsplit(".", 1)[-1].lower() in {"jpg", "jpeg", "png", "webp"}:
             return "Väärä tiedostomuoto"
