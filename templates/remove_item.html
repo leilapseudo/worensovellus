@@ -1,0 +1,4 @@
+<form method="POST" action="/remove_item/{{ item.id }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit">Delete</button>
+</form>

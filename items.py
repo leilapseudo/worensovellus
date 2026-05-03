@@ -26,9 +26,17 @@ def get_user_items(user_id):
     return db.query(sql, [user_id])
 
 def get_user_stats(user_id):
-    post_count = db.query("SELECT COUNT(*) as count FROM items WHERE user_id = ?", [user_id])[0]["count"]
-    comment_count = db.query("SELECT COUNT(*) as count FROM comments WHERE user_id = ?", [user_id])[0]["count"]
-    return {"post_count": post_count}
+    post_count = db.query("SELECT COUNT(*) AS count FROM items WHERE user_id = ?", [user_id])[0]["count"]
+    comment_count = db.query("SELECT COUNT(*) AS count FROM comments WHERE user_id = ?", [user_id])[0]["count"]
+    return {"post_count": post_count, "comment_count": comment_count}
+
+def get_user_likes(user_id):
+    sql = "SELECT COUNT(*) AS count FROM likes WHERE user_id = ?"
+    return db.query(sql, [user_id])[0]["count"]
+
+def get_user_reposts(user_id):
+    sql = "SELECT COUNT(*) AS count FROM reposts WHERE username = (SELECT username FROM users WHERE id = ?)"
+    return db.query(sql, [user_id])[0]["count"]
 
 def add_comment(item_id, user_id, content):
     sql = "INSERT INTO comments (item_id, user_id, content) VALUES (?, ?, ?)"
@@ -51,3 +59,10 @@ def get_all_comments():
         ORDER BY comments.id DESC
     """
     return db.query(sql)
+
+def get_user_comments(user_id):
+    sql = """SELECT comments.content, comments.created_at
+             FROM comments
+             WHERE comments.user_id = ?
+             ORDER BY comments.id DESC"""
+    return db.query(sql, [user_id])

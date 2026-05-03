@@ -107,6 +107,7 @@
     <h2>Uusi ilmoitus</h2>
 
     <form action="/create_item" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <p>Otsikko</p>
       <input type="text" name="title" maxlength="100" required />
       <p>Kuvaus</p>

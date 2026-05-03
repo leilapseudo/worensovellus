@@ -7,6 +7,7 @@ import items
 import users
 from werkzeug.security import check_password_hash, generate_password_hash
 import imghdr
+import secrets
 from flask import make_response, abort
 from flask import redirect, url_for, flash
 
@@ -18,6 +19,20 @@ app.secret_key = config.secret_key
 def require_login():
     if "user_id" not in session:
         abort(403)
+
+
+import secrets
+
+def get_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(32)
+    return session["csrf_token"]
+
+def check_csrf():
+    if request.form.get("csrf_token") != session.get("csrf_token"):
+        abort(403)
+
+app.jinja_env.globals["csrf_token"] = get_csrf_token
 
 @app.route("/")
 def index():
@@ -67,6 +82,7 @@ def item(item_id):
 @app.route("/create_item", methods=["POST"])
 def create_item():
     require_login()
+    check_csrf()
     title = request.form["title"]
     description = request.form["description"]
     section = request.form.get("section", "")
@@ -93,6 +109,7 @@ def edit_item(id):
 
 @app.route("/edit_item", methods=["POST"])
 def update_item():
+    check_csrf()
     require_login()
     id = request.form["id"]
     title = request.form["title"]
@@ -107,20 +124,27 @@ def update_item():
     return redirect("/")
 
 
-@app.route("/remove_item/<int:id>")
+@app.route("/remove_item/<int:id>", methods=["POST"])
 def remove_item(id):
     require_login()
+    check_csrf()
+    result = db.query("SELECT user_id FROM items WHERE id = ?", [id])
+    if not result:
+        abort(404)
+    if result[0]["user_id"] != session["user_id"]:
+        abort(403)
     db.execute("DELETE FROM comments WHERE item_id = ?", [id])
     db.execute("DELETE FROM items WHERE id = ?", [id])
     return redirect("/")
 
 @app.route("/like/<int:item_id>", methods=["POST"])
 def like(item_id):
+    check_csrf()
     if "user_id" not in session:
         return redirect("/login")
     user_id = session["user_id"]
     existing = db.query(
-        "SELECT * FROM likes WHERE user_id=? AND item_id=?",
+        db.query("SELECT id FROM likes WHERE user_id = ? AND item_id = ?", [user_id, item_id]),
         [user_id, item_id]
     )
     if existing:
@@ -132,6 +156,7 @@ def like(item_id):
 @app.route("/repost/<int:id>", methods=["POST"])
 def repost(id):
     require_login()
+    check_csrf()
     username = session["username"]
     existing = db.query("SELECT id FROM reposts WHERE username = ? AND item_id = ?", [username, id])
     if existing:
@@ -190,8 +215,11 @@ def register():
     return render_template("register.html")
 
 
+#Should be create_login
+
 @app.route("/create", methods=["POST"])
 def create():
+    check_csrf()
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -212,6 +240,8 @@ def create():
 
 @app.route("/comment", methods=["POST"])
 def comment():
+    require_login()
+    check_csrf()
     item_id = request.form["item_id"]
     content = request.form["content"]
     user_id = session["user_id"]
@@ -220,7 +250,6 @@ def comment():
     db.execute(sql, [item_id, user_id, content])
 
     return redirect(url_for("index"))
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -255,8 +284,10 @@ def user_profile(username):
         abort(404)
     user_items = items.get_user_items(user["id"])
     stats = items.get_user_stats(user["id"])
-    user_comments = items.get_comments(user["id"])
-    return render_template("profile.html", user=user, items=user_items, stats=stats, comments=user_comments)
+    user_comments = items.get_user_comments(user["id"])
+    total_likes = items.get_user_likes(user["id"])
+    total_reposts = items.get_user_reposts(user["id"])
+    return render_template("profile.html", user=user, items=user_items, stats=stats, comments=user_comments, total_likes=total_likes, total_reposts=total_reposts)
 
 def get_user_comments(user_id):
     sql = """
@@ -286,6 +317,7 @@ def show_image(user_id):
 @app.route("/add_image", methods=["GET", "POST"])
 def add_image():
     require_login()
+    check_csrf()
     if request.method == "GET":
         return render_template("add_image.html")
     if request.method == "POST":

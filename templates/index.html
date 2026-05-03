@@ -8,6 +8,11 @@
     body {
       font-family: Helvetica, Arial, sans-serif;
       background-color: #f2f2f2;
+      background-image: url('/static/carpet.jpg');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      background-size: auto 100vw;
     }
 
     a {
@@ -162,6 +167,8 @@
       border-bottom: 3px solid #1a1a1a;
       background: white;
       position: relative;
+      margin-bottom: 24px;
+      margin-top: 24px;
     }
 
     .item img {
@@ -219,7 +226,6 @@
 
     .like-btn {
       border: none;
-      border-right: 1px solid #ddd;
       padding: 8px 18px;
       font-size: 16px;
       cursor: pointer;
@@ -279,7 +285,6 @@
     /* COMMENTS */
     .comments {
       padding: 8px 20px 6px;
-      border-bottom: 1px solid #ddd;
     }
 
     .comment {
@@ -315,7 +320,6 @@
 
     .comment-form input[type="submit"] {
       border: none;
-      border-left: 1px solid #ddd;
       padding: 10px 18px;
       font-size: 13px;
       background: none;
@@ -333,7 +337,6 @@
 
     .repost-btn {
       border: none;
-      border-left: 1px solid #ddd;
       padding: 8px 14px;
       font-size: 12px;
       cursor: pointer;
@@ -346,7 +349,7 @@
     }
     .repost-btn:hover { background: #1a1a1a; color: white; }
     .repost-btn.reposted { color: #1a1a1a; font-weight: 700; }
-    .repost-count { font-size: 12px; color: #888; padding: 0 14px; border-left: 1px solid #ddd; }
+    .repost-count { font-size: 12px; color: #888; padding: 0 14px; }
   </style>
 </head>
 <body>
@@ -372,8 +375,9 @@
     <div class="logo">WOREN</div>
     {% if session.username %}
       <a href="/user/{{ session.username }}">oma profiili</a>
-      <a href="/new_item">+ lisää</a>
-      <a href="/logout">ulos</a>
+      <a href="/new_item">+ lisää julkaisu</a> 
+      <a href="/logout" style="position: fixed; bottom: 60px;">kirjaudu ulos</a>
+      <a href="/about" style="position: fixed; bottom: 85px;">about</a>
       <div class="sidebar-username">{{ session.username }}</div>
     {% else %}
       <a href="/login">kirjaudu sisään</a>
@@ -383,9 +387,11 @@
 
   <div class="main">
 
-    <!-- TOPBAR / SEARCH -->
+    <!-- TOPBAR AND SEARCH -->
+  <div style="padding: 12px 20px; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; color: #000000; background: white; font-weight: 700;">hae asua</div>
     <div class="topbar">
       <form action="/search" method="get" style="display:flex; gap:6px; align-items:center; flex:1; flex-wrap:wrap;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <select name="section">
           <option value="">kaikki</option>
           <option value="minimalismi">minimalismi</option>
@@ -419,6 +425,7 @@
         <div style="display:flex; align-items:center; gap:10px;">
           <a href="/user/{{ item.username }}">
             <img src="/profile_image/{{ item.user_id }}" 
+                onerror="this.src='/static/carpet.jpg'"
                 style="width:32px; height:32px; object-fit:cover; border-radius:50%; border:1.5px solid #1a1a1a;">
           </a>
           <div>
@@ -432,18 +439,19 @@
 
         <div class="item-desc">{{ item.description }}</div>
 
-  <div class="item-actions">
-        
+      <div class="item-actions">
+
         <form action="/like/{{ item.id }}" method="post" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="like-btn" type="submit">
             {% if item.id in user_likes %}♥{% else %}♡{% endif %}
           </button>
         </form>
         <span class="like-count">{{ like_counts[item.id] }} tykkäystä</span>
 
-       
         {% if session.username %}
         <form action="/repost/{{ item.id }}" method="post" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="repost-btn {% if item.id in user_reposts %}reposted{% endif %}" type="submit">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter">
               <path d="M17 1l4 4-4 4"/>
@@ -457,23 +465,20 @@
         <span class="repost-count">{{ repost_counts.get(item.id, 0) }}</span>
         {% endif %}
 
-          {% if session.username == item.username %}
-          <div class="menu">
-            <a href="/edit_item/{{ item.id }}" class="menu-link">muokkaa</a>
-            <a href="/remove_item/{{ item.id }}" class="menu-link">poista</a>
+        {% if session.username == item.username %}
+        <div class="menu">
+          <button class="menu-btn" style="background:none; border:none; border-left:1px solid #ddd; padding:8px 14px; cursor:pointer; font-size:16px; font-family:inherit;" onclick="var d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block'">•••</button>
+          <div class="dropdown">
+            <a href="/edit_item/{{ item.id }}">muokkaa</a>
+            <form action="/remove_item/{{ item.id }}" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" onclick="return confirm('Oletko varma?')" style="background:none; border:none; cursor:pointer; font-size:12px; color:#1a1a1a; padding:8px 12px; font-family:inherit; width:100%; text-align:left;">poista</button>
+            </form>
           </div>
-          {% endif %}
-
-          {% if session.username == item.username %}
-          <div class="menu">
-            <button class="menu-btn" onclick="var d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block'">•••</button>
-            <div class="dropdown">
-              <a href="/edit_item/{{ item.id }}">muokkaa</a>
-              <a href="/remove_item/{{ item.id }}" onclick="return confirm('Oletko varma?')">poista</a>
-            </div>
-          </div>
-          {% endif %}
         </div>
+        {% endif %}
+
+      </div>
 
 
       <!--COMMENTS-->
@@ -491,6 +496,7 @@
 
         {% if session.username %}
         <form class="comment-form" action="/comment" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="item_id" value="{{ item.id }}">
           <input type="text" name="content" placeholder="kommentoi" />
           <input type="submit" value="→" />
