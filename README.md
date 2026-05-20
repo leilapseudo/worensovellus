@@ -1,7 +1,7 @@
 # WOREN — who wore what?
 
 Demo:
-🔗 [woren](https://worensovellus.onrender.com)
+🔗 [woren](https://woren.onrender.com)
 
 Woren on asuinspiraatiosovellus asukriiseihin. Somessa tietoa on liikaa ja yleensä julkaisuilla yritetään myydä 
 joko omaa henkilöbrändiä tai muun brändin tuotetta.
