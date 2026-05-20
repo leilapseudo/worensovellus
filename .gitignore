@@ -7,7 +7,12 @@ venv/
 
 # Database
 database.db
+*.db
 *.sqlite3
 
 # Env files
 .env
+
+# Docker .yml
+
+docker-compose.yml
