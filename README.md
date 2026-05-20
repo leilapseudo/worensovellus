@@ -1,6 +1,14 @@
 # WOREN — who wore what?
 
-WOREN on asuinspiraatiosovellus asukriiseihin. Selaa muiden asuja, jaa omiasi.
+Demo:
+🔗 [woren](https://worensovellus.onrender.com)
+
+Woren on asuinspiraatiosovellus asukriiseihin. Somessa tietoa on liikaa ja yleensä julkaisuilla yritetään myydä 
+joko omaa henkilöbrändiä tai muun brändin tuotetta.
+Tarkoituksena oli tehdä vilpitön ratkaisu tähän ongelmaan, tuoda people-watching käden ulottuvuudelle ja kannustamaan
+muitakin kuin somevaikuttajia jakamaan asuja.
+
+Idea on yksinkertainen: selaa muiden asuja, jaa omiasi. 
 
 ## Ominaisuudet
 
@@ -11,21 +19,32 @@ WOREN on asuinspiraatiosovellus asukriiseihin. Selaa muiden asuja, jaa omiasi.
 - Haku tyylisuuntauksien ja kauden mukaan (minimalistic, fall/winter)
 - Oma profiilisivu asuhistorialla ja statseillä
 
+## Teknologiat
+- Python 
+- Flask
+- SQLite
+- HTML, CSS
+- Docker
 ## Asennus
+Asennus tapahtuu terminaalissa
 
+- git clone https://github.com/leilapseudo/worensovellus
 
--git clone https://github.com/leilapseudo/worensovellus
+- cd worensovellus
 
--cd worensovellus
+- pip install flask
 
--pip install flask
+- sqlite3 database.db < schema.sql
 
--sqlite3 database.db < schema.sql
+- flask run
 
--flask run
+- Avaa selaimessa: http://127.0.0.1:5000
 
--Avaa selaimessa: http://127.0.0.1:5000
+Jos sinulta löytyy Docker:
 
+- git clone https://github.com/leilapseudo/worensovellus
+- cd worensovellus
+- docker compose up
 
 
 
