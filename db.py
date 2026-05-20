@@ -22,3 +22,9 @@ def query(sql, params=[]):
     result = con.execute(sql, params).fetchall()
     con.close()
     return result
+
+def initialize():
+    con = get_connection()
+    with open("schema.sql") as f:
+        con.executescript(f.read())
+    con.close()

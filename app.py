@@ -10,6 +10,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 app = Flask(__name__)
+with app.app_context():
+    db.initialize()
 app.secret_key = config.secret_key
 
 
