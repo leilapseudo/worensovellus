@@ -67,7 +67,7 @@
     {% endif %}
 
     {% if session.username %}
-      <form action="/comment/{{ item.id }}" method="post" style="margin-top: 20px;">
+      <form action="/comment" method="post" style="margin-top: 20px;">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <textarea name="content" rows="3" maxlength="500" placeholder=""></textarea>
         <input type="submit" value="lähetä" />
